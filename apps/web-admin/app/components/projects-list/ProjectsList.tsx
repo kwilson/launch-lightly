@@ -7,6 +7,8 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
+import { $path } from "remix-routes";
+import { Link } from "@remix-run/react";
 
 type Project = {
   id: string;
@@ -33,7 +35,15 @@ export function ProjectsList({ projects }: ProjectsListProps) {
             <Tr key={project.id}>
               <Td>{project.id}</Td>
               <Td>{project.title}</Td>
-              <Td align="right">link to view</Td>
+              <Td align="right">
+                <Link
+                  to={$path("/projects/:projectId", {
+                    projectId: project.id,
+                  })}
+                >
+                  view
+                </Link>
+              </Td>
             </Tr>
           ))}
         </Tbody>
