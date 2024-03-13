@@ -143,6 +143,19 @@ importers:
         specifier: ^3.33.0
         version: 3.33.0(@cloudflare/workers-types@4.20240312.0)
 
+  packages/api:
+    dependencies:
+      hono:
+        specifier: ^4.1.0
+        version: 4.1.0
+    devDependencies:
+      '@hono/node-server':
+        specifier: ^1.8.2
+        version: 1.8.2
+      tsx:
+        specifier: ^4.7.1
+        version: 4.7.1
+
   packages/eslint-config:
     devDependencies:
       '@typescript-eslint/eslint-plugin':
@@ -1491,6 +1504,11 @@ packages:
   /@fastify/busboy@2.1.1:
     resolution: {integrity: sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==}
     engines: {node: '>=14'}
+
+  /@hono/node-server@1.8.2:
+    resolution: {integrity: sha512-h8l2TBLCPHZBUrrkosZ6L5CpBLj6zdESyF4B+zngiCDF7aZFQJ0alVbLx7jn8PCVi9EyoFf8a4hOZFi1tD95EA==}
+    engines: {node: '>=18.14.1'}
+    dev: true
 
   /@humanwhocodes/config-array@0.11.14:
     resolution: {integrity: sha512-3T8LkOmg45BV5FICb15QQMsyUSWrQ8AygVfC7ZG32zOalnqrilm018ZVCw0eapXux8FtA33q8PSRSstjee3jSg==}
@@ -5128,6 +5146,11 @@ packages:
       upper-case: 1.1.3
     dev: true
 
+  /hono@4.1.0:
+    resolution: {integrity: sha512-9no6DCHb4ijB1tWdFXU6JnrnFgzwVZ1cnIcS1BjAFnMcjbtBTOMsQrDrPH3GXbkNEEEkj8kWqcYBy8Qc0bBkJQ==}
+    engines: {node: '>=16.0.0'}
+    dev: false
+
   /hosted-git-info@2.8.9:
     resolution: {integrity: sha512-mxIDAb9Lsm6DoOJ7xH+5+X4y1LU/4Hi50L9C5sIswK3JzULS4bwk1FvjdBgvYR4bzT4tuUQiC15FE2f5HbLvYw==}
     dev: true
@@ -8391,6 +8414,17 @@ packages:
     dependencies:
       tslib: 1.14.1
       typescript: 5.3.3
+    dev: true
+
+  /tsx@4.7.1:
+    resolution: {integrity: sha512-8d6VuibXHtlN5E3zFkgY8u4DX7Y3Z27zvvPKVmLon/D4AjuKzarkUBTLDBgj9iTQ0hg5xM7c/mYiRVM+HETf0g==}
+    engines: {node: '>=18.0.0'}
+    hasBin: true
+    dependencies:
+      esbuild: 0.19.12
+      get-tsconfig: 4.7.2
+    optionalDependencies:
+      fsevents: 2.3.3
     dev: true
 
   /turbo-darwin-64@1.12.5:
