@@ -6,7 +6,7 @@ import {
   ScrollRestoration,
   useLoaderData,
 } from "@remix-run/react";
-import { ChakraProvider } from "@chakra-ui/react";
+import { Box, ChakraProvider } from "@chakra-ui/react";
 
 import { LinksFunction, json } from "@remix-run/cloudflare";
 import { environment } from "./environment.server";
@@ -69,8 +69,10 @@ const Document = withEmotionCache(
           ))}
         </head>
         <body>
-          {children}
-          <ApiHeartbeat apiBaseUrl={apiBaseUrl} />
+          <Box maxW="sm">
+            {children}
+            <ApiHeartbeat apiBaseUrl={apiBaseUrl} />
+          </Box>
           <ScrollRestoration />
           <Scripts />
         </body>

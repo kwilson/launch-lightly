@@ -5,11 +5,12 @@ import {
 } from "@remix-run/cloudflare";
 import { useLoaderData, Form } from "@remix-run/react";
 import { createProject, getAllProjects } from "~/data/projects.server";
-import { Input, Textarea, FormLabel } from "@chakra-ui/react";
+import { Input, Textarea, FormLabel, Text } from "@chakra-ui/react";
+import { ProjectsList } from "~/components/projects-list";
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "New Remix App" },
+    { title: "launch lightly" },
     {
       name: "description",
       content: "Welcome to Remix! Using Vite and Cloudflare!",
@@ -56,11 +57,13 @@ export default function Index() {
 
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
-      <h1 className="text-2xl">Launch Lightly</h1>
+      <Text size="" as="h1">
+        Launch Lightly
+      </Text>
 
       <h2>Project List</h2>
       {projects.length > 0 ? (
-        <p>{projects.length} projects</p>
+        <ProjectsList projects={projects} />
       ) : (
         <p>No Projects</p>
       )}
