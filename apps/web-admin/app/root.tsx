@@ -10,31 +10,19 @@ import {
 import stylesheet from "~/tailwind.css?url";
 import { LinksFunction, json } from "@remix-run/cloudflare";
 import { environment } from "./environment.server";
-import { z } from "zod";
+import { ApiHeartbeat } from "./components/api-heartbeat/ApiHeartbeat";
 
 export const links: LinksFunction = () => [
   { as: "style", href: stylesheet, rel: "stylesheet" },
 ];
 
-const heartbeatSchema = z.object({
-  running: z.boolean(),
-});
-
 export const loader = async () => {
   const { API_PUBLIC_URL } = environment();
-  console.log({ API_PUBLIC_URL });
-  const response = await fetch(`${API_PUBLIC_URL}/heartbeat`);
-  const parsed = heartbeatSchema.safeParse(await response.json());
-
-  if (parsed.success) {
-    return json(parsed.data);
-  }
-
-  return json({ running: false });
+  return json({ apiBaseUrl: API_PUBLIC_URL });
 };
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  const { running } = useLoaderData<typeof loader>();
+  const { apiBaseUrl } = useLoaderData<typeof loader>();
 
   return (
     <html lang="en">
@@ -47,7 +35,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <body>
         {children}
 
-        <p>API Connection: {running ? "Active" : "Disconnected"}</p>
+        {/* <p>API Connection: {running ? "Active" : "Disconnected"}</p> */}
+        <ApiHeartbeat apiBaseUrl={apiBaseUrl} />
         <ScrollRestoration />
         <Scripts />
       </body>
