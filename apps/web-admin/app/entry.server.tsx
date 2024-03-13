@@ -7,7 +7,11 @@
 import type { AppLoadContext, EntryContext } from "@remix-run/cloudflare";
 import { RemixServer } from "@remix-run/react";
 import { isbot } from "isbot";
-import { renderToReadableStream } from "react-dom/server";
+import { renderToReadableStream, renderToString } from "react-dom/server";
+import createEmotionCache from "./createEmotionCache";
+import createEmotionServer from "@emotion/server/create-instance";
+import { ServerStyleContext } from "./context";
+import { CacheProvider } from "@emotion/react";
 
 export default async function handleRequest(
   request: Request,
@@ -19,8 +23,25 @@ export default async function handleRequest(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   loadContext: AppLoadContext,
 ) {
+  const cache = createEmotionCache();
+  const { extractCriticalToChunks } = createEmotionServer(cache);
+
+  const html = renderToString(
+    <ServerStyleContext.Provider value={null}>
+      <CacheProvider value={cache}>
+        <RemixServer context={remixContext} url={request.url} />
+      </CacheProvider>
+    </ServerStyleContext.Provider>,
+  );
+
+  const chunks = extractCriticalToChunks(html);
+
   const body = await renderToReadableStream(
-    <RemixServer context={remixContext} url={request.url} />,
+    <ServerStyleContext.Provider value={chunks.styles}>
+      <CacheProvider value={cache}>
+        <RemixServer context={remixContext} url={request.url} />
+      </CacheProvider>
+    </ServerStyleContext.Provider>,
     {
       signal: request.signal,
       onError(error: unknown) {

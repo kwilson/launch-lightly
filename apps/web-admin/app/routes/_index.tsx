@@ -5,6 +5,7 @@ import {
 } from "@remix-run/cloudflare";
 import { useLoaderData, Form } from "@remix-run/react";
 import { createProject, getAllProjects } from "~/data/projects.server";
+import { Input, Textarea, FormLabel } from "@chakra-ui/react";
 
 export const meta: MetaFunction = () => {
   return [
@@ -66,20 +67,20 @@ export default function Index() {
 
       <h2>Create a project</h2>
       <Form className="flex flex-col" method="post">
-        <label>
+        <FormLabel>
           ID
-          <input name="id" required defaultValue="my-first-project" />
-        </label>
+          <Input name="id" required defaultValue="my-first-project" />
+        </FormLabel>
 
-        <label>
+        <FormLabel>
           Title
-          <input name="title" required defaultValue="My First Project" />
-        </label>
+          <Input name="title" required defaultValue="My First Project" />
+        </FormLabel>
 
-        <label>
+        <FormLabel>
           Description
-          <textarea name="description" defaultValue="Hello world" />
-        </label>
+          <Textarea name="description" defaultValue="Hello world" />
+        </FormLabel>
 
         <button type="submit">Create</button>
       </Form>
