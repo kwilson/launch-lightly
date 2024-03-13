@@ -6,13 +6,17 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsx watch ./dev-server.ts",
-    "start": "tsx ./dev-server.ts"
+    "start": "tsx ./dev-server.ts",
+    "prisma:migrate": "npx prisma migrate dev"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "hono": "^4.1.0"
+    "@prisma/client": "5.11.0",
+    "hono": "^4.1.0",
+    "prisma": "^5.11.0",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@hono/node-server": "^1.8.2",
