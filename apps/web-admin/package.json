@@ -1,5 +1,5 @@
 {
-  "name": "web-admin",
+  "name": "@launch-lightly/web-admin",
   "private": true,
   "sideEffects": false,
   "type": "module",
