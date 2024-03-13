@@ -13,7 +13,7 @@ export const meta: MetaFunction = () => {
 export default function Index() {
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
-      <h1>Welcome to Remix (with Vite and Cloudflare)</h1>
+      <h1 className="text-5xl">Welcome to Remix (with Vite and Cloudflare)</h1>
       <ul>
         <li>
           <a
