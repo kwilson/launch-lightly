@@ -200,6 +200,9 @@ importers:
       tsx:
         specifier: ^4.7.1
         version: 4.7.1
+      wrangler:
+        specifier: ^3.34.2
+        version: 3.34.2
 
   packages/eslint-config:
     devDependencies:

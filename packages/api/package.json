@@ -8,7 +8,7 @@
     "dev": "tsx watch ./dev-server.ts",
     "start": "tsx ./dev-server.ts",
     "prisma:migrate": "npx prisma migrate dev",
-    "deploy": "wrangler deploy"
+    "deploy": "npx wrangler deploy"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "@hono/node-server": "^1.8.2",
-    "tsx": "^4.7.1"
+    "tsx": "^4.7.1",
+    "wrangler": "^3.34.2"
   }
 }
