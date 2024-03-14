@@ -1,13 +1,13 @@
 import * as z from "zod";
 
-async function loadDevConfig() {
-  if (process.env.NODE_ENV === "development") {
-    const { config } = await import("dotenv");
-    config({ path: "../../.env" });
-  }
-}
+// async function loadDevConfig() {
+//   if (process.env.NODE_ENV === "development") {
+//     const { config } = await import("dotenv");
+//     config({ path: "../../.env" });
+//   }
+// }
 
-loadDevConfig();
+// loadDevConfig();
 
 const environmentSchema = z.object({
   NODE_ENV: z
@@ -16,6 +16,6 @@ const environmentSchema = z.object({
   API_PUBLIC_URL: z.string().min(1),
 });
 
-const environment = () => environmentSchema.parse(process.env);
+const environment = (env?: unknown) => environmentSchema.parse(env);
 
 export { environment };

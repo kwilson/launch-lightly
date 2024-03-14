@@ -9,7 +9,7 @@ import { RemixServer } from "@remix-run/react";
 import { isbot } from "isbot";
 import { renderToReadableStream, renderToString } from "react-dom/server";
 import createEmotionCache from "./createEmotionCache";
-// import createEmotionServer from "@emotion/server/create-instance";
+import createEmotionServer from "@emotion/server/create-instance";
 import { ServerStyleContext } from "./context";
 import { CacheProvider } from "@emotion/react";
 
@@ -26,7 +26,7 @@ export default async function handleRequest(
   const cache = createEmotionCache();
 
   // Emotion server doesn't work with cloudflare pages
-  // const { extractCriticalToChunks } = createEmotionServer(cache);
+  const { extractCriticalToChunks } = createEmotionServer(cache);
 
   const html = renderToString(
     <ServerStyleContext.Provider value={null}>
@@ -36,10 +36,10 @@ export default async function handleRequest(
     </ServerStyleContext.Provider>,
   );
 
-  // const chunks = extractCriticalToChunks(html);
+  const chunks = extractCriticalToChunks(html);
 
   const body = await renderToReadableStream(
-    <ServerStyleContext.Provider value={null}>
+    <ServerStyleContext.Provider value={chunks.styles}>
       <CacheProvider value={cache}>
         <RemixServer context={remixContext} url={request.url} />
       </CacheProvider>

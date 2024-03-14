@@ -1,4 +1,8 @@
-import { json, type MetaFunction } from "@remix-run/cloudflare";
+import {
+  json,
+  LoaderFunctionArgs,
+  type MetaFunction,
+} from "@remix-run/cloudflare";
 import { useLoaderData } from "@remix-run/react";
 import { getAllProjects } from "~/data/projects.server";
 import { Box, Heading, Flex, VStack, Text } from "@chakra-ui/react";
@@ -17,8 +21,8 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export const loader = async () => {
-  const projects = await getAllProjects();
+export const loader = async ({ context }: LoaderFunctionArgs) => {
+  const projects = await getAllProjects(context);
   return json({ projects });
 };
 

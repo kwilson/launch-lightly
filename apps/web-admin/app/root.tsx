@@ -8,7 +8,7 @@ import {
 } from "@remix-run/react";
 import { Box, ChakraProvider, Container } from "@chakra-ui/react";
 
-import { LinksFunction, json } from "@remix-run/cloudflare";
+import { LinksFunction, LoaderFunctionArgs, json } from "@remix-run/cloudflare";
 import { environment } from "./environment.server";
 import { withEmotionCache } from "@emotion/react";
 import { useContext, useEffect } from "react";
@@ -25,8 +25,8 @@ export const links: LinksFunction = () => [
   },
 ];
 
-export const loader = async () => {
-  const { API_PUBLIC_URL } = environment();
+export const loader = async ({ context }: LoaderFunctionArgs) => {
+  const { API_PUBLIC_URL } = environment(context.cloudflare.env);
   return json({ apiBaseUrl: API_PUBLIC_URL });
 };
 
