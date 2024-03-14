@@ -1,4 +1,7 @@
 import { PrismaClient } from "@prisma/client";
+import hash from "object-hash";
+import { cache } from "./cache";
+import z from "zod";
 
 type CreateFlagDto = {
   key: string;
@@ -10,7 +13,6 @@ type CreateFlagDto = {
 
 export async function createFlag(flag: CreateFlagDto) {
   const prisma = new PrismaClient();
-
   try {
     return await prisma.flag.create({
       data: flag,
@@ -21,13 +23,29 @@ export async function createFlag(flag: CreateFlagDto) {
   }
 }
 
+const flagsForUserSchema = z.object({
+  lastUpdated: z.string().optional(),
+  flags: z.array(z.string()),
+});
+
+type FlagsForUserResult = z.infer<typeof flagsForUserSchema>;
+
 export async function getFlagsForUser({
   projectId,
   userId,
 }: {
   projectId: string;
   userId: string;
-}) {
+}): Promise<FlagsForUserResult | null> {
+  const cachKey = hash({ projectId, userId });
+  if (cache.has(cachKey)) {
+    try {
+      return flagsForUserSchema.parse(cache.get(cachKey));
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
   const prisma = new PrismaClient();
 
   try {
@@ -56,12 +74,18 @@ export async function getFlagsForUser({
       .sort()
       .at(0);
 
-    return {
+    const result: FlagsForUserResult = {
       flags: enabledFlags,
-      lastUpdated,
+      lastUpdated: lastUpdated?.toISOString(),
     };
+
+    cache.set(cachKey, result);
+
+    return result;
   } catch (e) {
     console.error(e);
     await prisma.$disconnect();
   }
+
+  return null;
 }

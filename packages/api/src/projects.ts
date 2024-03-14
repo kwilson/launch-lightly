@@ -8,6 +8,7 @@ import {
 } from "../data/projects";
 import { createFlag, getFlagsForUser } from "../data/flags";
 import { z } from "zod";
+import { streamSSE } from "hono/streaming";
 
 export const projects = new Hono();
 projects.use("/*", cors());
@@ -52,6 +53,23 @@ projects.get("/:projectId/flags/:userId", async (c) => {
 
   const flags = await getFlagsForUser({ projectId, userId });
   return c.json(flags);
+});
+
+projects.get("/:projectId/flags/:userId/listen", async (c) => {
+  const projectId = c.req.param("projectId");
+  const userId = c.req.param("userId");
+
+  return streamSSE(c, async (stream) => {
+    while (true) {
+      const data = await getFlagsForUser({ projectId, userId });
+      await stream.writeSSE({
+        data: JSON.stringify(data),
+        event: "message",
+      });
+
+      await stream.sleep(15000);
+    }
+  });
 });
 
 const newFlagSchema = z.object({

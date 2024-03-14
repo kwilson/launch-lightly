@@ -25,15 +25,17 @@ export function useUserFlags(
       const parsed = flagSchema.safeParse(await response.json());
 
       if (parsed.success) {
-        setFlags(parsed.data.flags);
-        setLastUpdated(parsed.data.lastUpdated);
+        if (lastUpdated !== parsed.data.lastUpdated) {
+          setFlags(parsed.data.flags);
+          setLastUpdated(parsed.data.lastUpdated);
+        }
       } else {
         console.error(parsed.error);
       }
     }
 
     getData();
-  }, [url, setFlags, setLastUpdated]);
+  }, [url, lastUpdated, setFlags, setLastUpdated]);
 
   return { flags };
 }
