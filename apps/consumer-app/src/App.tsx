@@ -12,7 +12,7 @@ function FlaggedContext() {
 
 function App() {
   return (
-    <LaunchLightlyContext appId="appid-123">
+    <LaunchLightlyContext projectId="my-first-project" userId="kevin">
       <div style={{ textAlign: "left" }}>
         <FlaggedContext />
       </div>

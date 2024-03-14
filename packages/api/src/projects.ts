@@ -6,7 +6,7 @@ import {
   getAllProjects,
   getProjectDetails,
 } from "../data/projects";
-import { createFlag } from "../data/flags";
+import { createFlag, getFlagsForUser } from "../data/flags";
 import { z } from "zod";
 
 export const projects = new Hono();
@@ -46,6 +46,14 @@ projects.get("/:projectId", async (c) => {
   return c.json(project);
 });
 
+projects.get("/:projectId/flags/:userId", async (c) => {
+  const projectId = c.req.param("projectId");
+  const userId = c.req.param("userId");
+
+  const flags = await getFlagsForUser({ projectId, userId });
+  return c.json(flags);
+});
+
 const newFlagSchema = z.object({
   key: z.string().min(1),
   title: z.string().min(1),
@@ -57,7 +65,6 @@ projects.post(
   "/:projectId/create-flag",
   validator("json", (value, c) => {
     const parsed = newFlagSchema.safeParse(value);
-    console.log({ parsed });
     if (!parsed.success) {
       return c.json(parsed.error, 401);
     }

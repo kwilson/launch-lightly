@@ -1,42 +1,43 @@
 import { PropsWithChildren, createContext, useMemo } from "react";
 import { useHeartbeat } from "../hooks/useHeartbeat";
+import { useUserFlags } from "..";
 
 type LaunchLightlyContextProps = {
-  appId: string;
+  projectId: string;
+  userId: string;
 };
 
 type LaunchLightlyContextState = {
-  flags: Record<string, unknown>;
+  flags: string[];
   connected: boolean;
-  appId: string;
+  projectId: string;
 };
 
 export const LaunchLightlyContextObject =
   createContext<LaunchLightlyContextState>({
-    flags: {},
+    flags: [],
     connected: false,
-    appId: "",
+    projectId: "",
   });
 
 const apiBaseUrl = "http://localhost:3002";
 
 export function LaunchLightlyContext({
   children,
-  appId,
+  projectId,
+  userId,
 }: PropsWithChildren<LaunchLightlyContextProps>) {
   const { connected } = useHeartbeat(apiBaseUrl);
 
-  const flags = useMemo(() => {
-    return { appId };
-  }, []);
+  const { flags } = useUserFlags(apiBaseUrl, { projectId, userId });
 
   const state: LaunchLightlyContextState = useMemo(
     () => ({
       flags,
       connected,
-      appId,
+      projectId,
     }),
-    [flags, connected, appId],
+    [flags, connected, projectId],
   );
 
   return (
