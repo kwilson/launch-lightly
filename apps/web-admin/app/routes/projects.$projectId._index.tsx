@@ -36,9 +36,19 @@ export default function ProjectDetails() {
         </Box>
 
         <Box>
-          <Heading fontSize="2rem" mb="1rem" as="h3">
-            Flags
-          </Heading>
+          <Flex justifyContent="space-between" mb="2rem">
+            <Heading fontSize="2rem" mb="1rem" as="h3">
+              Flags
+            </Heading>
+            <Button
+              prefetch="intent"
+              to={$path("/projects/:projectId/create-flag", {
+                projectId: project.id,
+              })}
+            >
+              Create Flag
+            </Button>
+          </Flex>
           <Box
             bg="ivory.100"
             borderColor="cerulean.500"
@@ -53,6 +63,7 @@ export default function ProjectDetails() {
               <VStack>
                 <Text align="center">You don't have any flags.</Text>
                 <Button
+                  prefetch="intent"
                   to={$path("/projects/:projectId/create-flag", {
                     projectId: project.id,
                   })}

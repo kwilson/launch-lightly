@@ -9,13 +9,19 @@ heartbeat.get("/", (c) => c.json({ running: true }));
 
 heartbeat.get("/listen", async (c) => {
   return streamSSE(c, async (stream) => {
-    while (true) {
+    let open = true;
+
+    stream.onAbort(() => {
+      stream.close();
+      open = false;
+    });
+
+    while (open) {
       const data = {
         time: new Date().toISOString(),
         alive: true,
       };
 
-      const message = `It is ${new Date().toISOString()}`;
       await stream.writeSSE({
         data: JSON.stringify(data),
         event: "message",

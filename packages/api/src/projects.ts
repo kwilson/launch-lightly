@@ -60,7 +60,14 @@ projects.get("/:projectId/flags/:userId/listen", async (c) => {
   const userId = c.req.param("userId");
 
   return streamSSE(c, async (stream) => {
-    while (true) {
+    let open = true;
+
+    stream.onAbort(() => {
+      stream.close();
+      open = false;
+    });
+
+    while (open) {
       const data = await getFlagsForUser({ projectId, userId });
       await stream.writeSSE({
         data: JSON.stringify(data),

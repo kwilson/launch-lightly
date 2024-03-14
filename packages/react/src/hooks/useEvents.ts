@@ -34,5 +34,5 @@ export function useEvents<TSchema extends ZodRawShape>({
       sse.removeEventListener("error", onError);
       sse.close();
     };
-  }, []);
+  }, [url, schema, onMessage]);
 }
