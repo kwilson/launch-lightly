@@ -6,14 +6,15 @@ import {
   ScrollRestoration,
   useLoaderData,
 } from "@remix-run/react";
-import { Box, ChakraProvider } from "@chakra-ui/react";
+import { Box, ChakraProvider, Container } from "@chakra-ui/react";
 
 import { LinksFunction, json } from "@remix-run/cloudflare";
 import { environment } from "./environment.server";
-import { ApiHeartbeat } from "./components/api-heartbeat/ApiHeartbeat";
 import { withEmotionCache } from "@emotion/react";
 import { useContext, useEffect } from "react";
 import { ClientStyleContext, ServerStyleContext } from "./context";
+import { theme, sizing } from "./theme";
+import { PageHeader } from "./components/page-header";
 
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -69,10 +70,20 @@ const Document = withEmotionCache(
           ))}
         </head>
         <body>
-          <Box maxW="sm">
-            {children}
-            <ApiHeartbeat apiBaseUrl={apiBaseUrl} />
-          </Box>
+          <ChakraProvider theme={theme}>
+            <Box bg="ivory.500" textColor="black.500" minHeight="100vh">
+              <PageHeader apiBaseUrl={apiBaseUrl} />
+
+              <Container
+                as="main"
+                mx="auto"
+                maxWidth={sizing.contentsMaxWidth}
+                p={sizing.blockSpacing}
+              >
+                {children}
+              </Container>
+            </Box>
+          </ChakraProvider>
           <ScrollRestoration />
           <Scripts />
         </body>
@@ -84,9 +95,7 @@ const Document = withEmotionCache(
 export default function App() {
   return (
     <Document>
-      <ChakraProvider>
-        <Outlet />
-      </ChakraProvider>
+      <Outlet />
     </Document>
   );
 }

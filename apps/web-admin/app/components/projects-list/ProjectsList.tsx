@@ -9,6 +9,7 @@ import {
 } from "@chakra-ui/react";
 import { $path } from "remix-routes";
 import { Link } from "@remix-run/react";
+import { Button } from "../button";
 
 type Project = {
   id: string;
@@ -32,17 +33,36 @@ export function ProjectsList({ projects }: ProjectsListProps) {
         </Thead>
         <Tbody>
           {projects.map((project) => (
-            <Tr key={project.id}>
-              <Td>{project.id}</Td>
-              <Td>{project.title}</Td>
-              <Td align="right">
+            <Tr key={project.id} _hover={{ backgroundColor: "#00000010" }}>
+              <Td width={0}>
                 <Link
+                  to={$path("/projects/:projectId", {
+                    projectId: project.id,
+                  })}
+                  prefetch="intent"
+                >
+                  {project.id}
+                </Link>
+              </Td>
+              <Td>
+                <Link
+                  to={$path("/projects/:projectId", {
+                    projectId: project.id,
+                  })}
+                  prefetch="intent"
+                >
+                  {project.title}
+                </Link>
+              </Td>
+              <Td align="right" textAlign="right" width="min-content">
+                <Button
+                  prefetch="intent"
                   to={$path("/projects/:projectId", {
                     projectId: project.id,
                   })}
                 >
                   view
-                </Link>
+                </Button>
               </Td>
             </Tr>
           ))}

@@ -1,19 +1,18 @@
-import {
-  ActionFunctionArgs,
-  json,
-  type MetaFunction,
-} from "@remix-run/cloudflare";
-import { useLoaderData, Form } from "@remix-run/react";
-import { createProject, getAllProjects } from "~/data/projects.server";
-import { Input, Textarea, FormLabel, Text } from "@chakra-ui/react";
+import { json, type MetaFunction } from "@remix-run/cloudflare";
+import { useLoaderData } from "@remix-run/react";
+import { getAllProjects } from "~/data/projects.server";
+import { Box, Heading, Flex, VStack, Text } from "@chakra-ui/react";
 import { ProjectsList } from "~/components/projects-list";
+import { Button } from "~/components/button";
+import { $path } from "remix-routes";
+import { sizing } from "~/theme";
 
 export const meta: MetaFunction = () => {
   return [
     { title: "launch lightly" },
     {
       name: "description",
-      content: "Welcome to Remix! Using Vite and Cloudflare!",
+      content: "streaming your feature flags",
     },
   ];
 };
@@ -23,70 +22,33 @@ export const loader = async () => {
   return json({ projects });
 };
 
-export const action = async ({ request }: ActionFunctionArgs) => {
-  const formData = await request.formData();
-  const id = String(formData.get("id"));
-  const title = String(formData.get("title"));
-  const description = String(formData.get("description"));
-
-  const errors: Record<string, string> = {};
-
-  if (!id) {
-    errors.id = "ID is required";
-  }
-
-  if (!title) {
-    errors.title = "Title is required";
-  }
-
-  if (Object.keys(errors).length > 0) {
-    return json({ errors });
-  }
-
-  try {
-    const newProject = await createProject({ id, title, description });
-    return json({ newProject });
-  } catch (e) {
-    console.error(e);
-    return json({ error: e });
-  }
-};
-
 export default function Index() {
   const { projects } = useLoaderData<typeof loader>();
 
   return (
-    <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
-      <Text size="" as="h1">
-        Launch Lightly
-      </Text>
+    <Box>
+      <Flex justifyContent="space-between" mb="2rem">
+        <Heading as="h2">Your Projects</Heading>
+        <Button to={$path("/projects/create")}>New Project</Button>
+      </Flex>
 
-      <h2>Project List</h2>
-      {projects.length > 0 ? (
-        <ProjectsList projects={projects} />
-      ) : (
-        <p>No Projects</p>
-      )}
-
-      <h2>Create a project</h2>
-      <Form className="flex flex-col" method="post">
-        <FormLabel>
-          ID
-          <Input name="id" required defaultValue="my-first-project" />
-        </FormLabel>
-
-        <FormLabel>
-          Title
-          <Input name="title" required defaultValue="My First Project" />
-        </FormLabel>
-
-        <FormLabel>
-          Description
-          <Textarea name="description" defaultValue="Hello world" />
-        </FormLabel>
-
-        <button type="submit">Create</button>
-      </Form>
-    </div>
+      <Box
+        bg="ivory.100"
+        borderColor="cerulean.500"
+        borderWidth={1}
+        p={sizing.blockSpacing}
+        rounded={6}
+        mx={`-${sizing.blockSpacing}`}
+      >
+        {projects.length > 0 ? (
+          <ProjectsList projects={projects} />
+        ) : (
+          <VStack>
+            <Text align="center">You don't have any projects.</Text>
+            <Button to={$path("/projects/create")}>Create A New Project</Button>
+          </VStack>
+        )}
+      </Box>
+    </Box>
   );
 }

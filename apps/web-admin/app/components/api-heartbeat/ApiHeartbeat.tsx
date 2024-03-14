@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { z } from "zod";
+import { Box, HStack, Text } from "@chakra-ui/react";
+import { CheckCircleIcon, WarningIcon } from "@chakra-ui/icons";
 
 type ApiHeartbeatProps = {
   apiBaseUrl: string;
@@ -40,5 +42,12 @@ export function ApiHeartbeat({ apiBaseUrl }: ApiHeartbeatProps) {
     };
   }, [apiBaseUrl]);
 
-  return <p>API Status: {isAlive ? "Active" : "Inactive"}</p>;
+  return (
+    <HStack fontWeight={800} alignItems="center">
+      <Text as="span">API Status</Text>
+      <Box fontSize="1.4em">
+        {isAlive ? <CheckCircleIcon /> : <WarningIcon />}
+      </Box>
+    </HStack>
+  );
 }
