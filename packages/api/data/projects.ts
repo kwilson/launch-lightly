@@ -42,3 +42,25 @@ export async function createProject(project: CreateProjectDto) {
     await prisma.$disconnect();
   }
 }
+
+export async function getProjectDetails(projectId: string) {
+  const prisma = new PrismaClient();
+
+  try {
+    return await prisma.project.findUnique({
+      where: {
+        id: projectId,
+      },
+      include: {
+        flags: {
+          include: {
+            userFlags: true,
+          },
+        },
+      },
+    });
+  } catch (e) {
+    console.error(e);
+    await prisma.$disconnect();
+  }
+}

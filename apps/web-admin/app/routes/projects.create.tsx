@@ -13,7 +13,7 @@ import { Button } from "~/components/button";
 import { createProject } from "~/data/projects.server";
 import { sizing } from "~/theme";
 
-export const action = async ({ request }: ActionFunctionArgs) => {
+export const action = async ({ request, context }: ActionFunctionArgs) => {
   const formData = await request.formData();
   const id = String(formData.get("id"));
   const title = String(formData.get("title"));
@@ -34,7 +34,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   }
 
   try {
-    const newProject = await createProject({ id, title, description });
+    const newProject = await createProject({ id, title, description }, context);
     return json({ newProject });
   } catch (e) {
     console.error(e);

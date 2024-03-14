@@ -18,6 +18,35 @@ model Project {
   id              String    @db.VarChar(25) @id
   title           String
   description     String?
+  
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+  
+  flags           Flag[]
+}
+
+model Flag {
+  id              String    @id @default(uuid())
+  key             String
+  title           String
+  description     String?
+  defaultEnabled  Boolean   @default(false)
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  project         Project   @relation(fields: [projectId], references: [id])
+  projectId       String
+
+  userFlags       UserFlag[]
+}
+
+model UserFlag {
+  userId          String
+  flagId          String
+  enabled         Boolean   @default(false)
+
+  Flag            Flag @relation(fields: [flagId], references: [id])
+
+  @@id(name: "userFlagId", [userId, flagId])
 }
