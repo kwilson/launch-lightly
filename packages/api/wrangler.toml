@@ -1,0 +1,4 @@
+# Top-level configuration
+name = "launchlightly-api"
+main = "src/index.ts"
+compatibility_date = "2024-03-14"

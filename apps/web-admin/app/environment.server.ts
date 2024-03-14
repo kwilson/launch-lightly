@@ -1,8 +1,8 @@
 import * as z from "zod";
 
 async function loadDevConfig() {
-  if (process.env.NODE_ENV === 'development') {
-    const { config } = await import('dotenv');
+  if (process.env.NODE_ENV === "development") {
+    const { config } = await import("dotenv");
     config({ path: "../../.env" });
   }
 }

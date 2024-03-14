@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsx watch ./dev-server.ts",
     "start": "tsx ./dev-server.ts",
-    "prisma:migrate": "npx prisma migrate dev"
+    "prisma:migrate": "npx prisma migrate dev",
+    "deploy": "wrangler deploy"
   },
   "keywords": [],
   "author": "",
