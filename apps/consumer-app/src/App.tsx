@@ -37,7 +37,7 @@ function FlaggedContext() {
 
 function App() {
   const [userFieldId, setUserFieldId] = useState("");
-  const [userId, setUserId] = useState("kevin");
+  const [userId, setUserId] = useState("");
 
   const isLoggedIn = Boolean(userId);
 
