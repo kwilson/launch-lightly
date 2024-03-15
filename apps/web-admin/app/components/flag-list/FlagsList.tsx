@@ -61,7 +61,7 @@ export function FlagsList({ projectId, flags }: FlagsListProps) {
                 </Link>
               </Td>
               <Td textAlign="center" width="min-content">
-                <Switch isChecked={flag.defaultEnabled} readOnly />
+                <Switch defaultChecked={flag.defaultEnabled} readOnly />
               </Td>
               <Td align="right" textAlign="right" width="min-content">
                 <Button

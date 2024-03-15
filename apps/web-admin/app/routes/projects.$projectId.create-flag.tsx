@@ -11,11 +11,8 @@ import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/cloudflare";
 import { redirect, json, useLoaderData, Form } from "@remix-run/react";
 import { $params, $path } from "remix-routes";
 import { Button } from "~/components/button";
-import {
-  createProject,
-  createProjectFlag,
-  getProjectDetails,
-} from "~/data/projects.server";
+import { FlagForm } from "~/components/flag-form";
+import { createProjectFlag, getProjectDetails } from "~/data/projects.server";
 import { sizing } from "~/theme";
 
 export const loader = async ({ params, context }: LoaderFunctionArgs) => {
@@ -103,26 +100,7 @@ export default function CreateFlag() {
             mx={`-${sizing.blockSpacing}`}
           >
             <Flex flexDir="column" as={Form} method="post" gap="2rem">
-              <FormLabel fontWeight={800}>
-                Key
-                <Input bg="white" name="key" required placeholder="my-flag" />
-              </FormLabel>
-
-              <FormLabel fontWeight={800}>
-                Title
-                <Input
-                  bg="white"
-                  colorScheme="white"
-                  name="title"
-                  required
-                  placeholder="My Flag"
-                />
-              </FormLabel>
-
-              <FormLabel fontWeight={800}>
-                Description
-                <Textarea bg="white" name="description" />
-              </FormLabel>
+              <FlagForm />
 
               <Box alignSelf="flex-start">
                 <Button type="submit">Create Flag</Button>

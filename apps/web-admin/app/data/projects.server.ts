@@ -1,25 +1,8 @@
 import { AppLoadContext } from "@remix-run/cloudflare";
 import { z } from "zod";
 import { environment } from "~/environment.server";
-
-const flagSchema = z.object({
-  id: z.string(),
-  key: z.string(),
-  title: z.string(),
-  description: z.string().optional(),
-  defaultEnabled: z.boolean().optional(),
-  createdAt: z.string().optional(),
-  updatedAt: z.string().optional(),
-});
-
-const projectSchema = z.object({
-  id: z.string(),
-  title: z.string(),
-  description: z.string().optional(),
-  createdAt: z.string().optional(),
-  updatedAt: z.string().optional(),
-  flags: z.array(flagSchema).default([]),
-});
+import { flagSchema } from "../schemas/flagSchema";
+import { Project, projectSchema } from "../schemas/projectSchema";
 
 export async function getAllProjects(ctx: AppLoadContext) {
   const { API_PUBLIC_URL } = environment(ctx.cloudflare.env);
@@ -49,7 +32,7 @@ export async function getProjectDetails(
 }
 
 export async function createProject(
-  project: Pick<z.infer<typeof projectSchema>, "id" | "title" | "description">,
+  project: Pick<Project, "id" | "title" | "description">,
   ctx: AppLoadContext,
 ) {
   const { API_PUBLIC_URL } = environment(ctx.cloudflare.env);
@@ -88,6 +71,63 @@ export async function createProjectFlag(
     {
       method: "POST",
       body: JSON.stringify({ key, title, description, defaultEnabled }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+  );
+
+  const result = flagSchema.safeParse(await data.json());
+
+  if (result.success) {
+    return result.data;
+  }
+
+  return {};
+}
+
+export async function updateProjectFlag(
+  projectId: string,
+  flagId: string,
+  flag: Pick<
+    z.infer<typeof flagSchema>,
+    "key" | "title" | "description" | "defaultEnabled"
+  >,
+  ctx: AppLoadContext,
+) {
+  const { API_PUBLIC_URL } = environment(ctx.cloudflare.env);
+  const { key, title, description, defaultEnabled } = flag;
+
+  const data = await fetch(
+    `${API_PUBLIC_URL}/projects/${projectId}/${flagId}`,
+    {
+      method: "PATCH",
+      body: JSON.stringify({ key, title, description, defaultEnabled }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+  );
+
+  const result = flagSchema.safeParse(await data.json());
+
+  if (result.success) {
+    return result.data;
+  }
+
+  return {};
+}
+
+export async function deleteProjectFlag(
+  projectId: string,
+  flagId: string,
+  ctx: AppLoadContext,
+) {
+  const { API_PUBLIC_URL } = environment(ctx.cloudflare.env);
+  const data = await fetch(
+    `${API_PUBLIC_URL}/projects/${projectId}/${flagId}`,
+    {
+      method: "DELETE",
       headers: {
         "Content-Type": "application/json",
       },

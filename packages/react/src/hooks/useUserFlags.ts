@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import z from "zod";
 import { useEvents } from "./useEvents";
 
@@ -16,20 +16,31 @@ export function useUserFlags(
   apiBaseUrl: string,
   { projectId, userId }: UseUserFlagsArgs,
 ) {
-  const url = `${apiBaseUrl}/projects/${projectId}/flags/${userId}`;
+  const url =
+    projectId && userId
+      ? `${apiBaseUrl}/projects/${projectId}/flags/${userId}`
+      : null;
   const listenUrl = `${apiBaseUrl}/projects/${projectId}/flags/${userId}/listen`;
 
-  const [flags, setFlags] = useState<z.infer<typeof flagSchema>["flags"]>([]);
+  const [enabledFlags, setEnabledFlags] = useState<
+    z.infer<typeof flagSchema>["flags"]
+  >([]);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
 
+  // Reset flags if the user changes
   useEffect(() => {
-    async function getData() {
-      const response = await fetch(url);
+    setEnabledFlags([]);
+    setLastUpdated(null);
+  }, [userId]);
+
+  useEffect(() => {
+    async function getData(fetchUrl: string) {
+      const response = await fetch(fetchUrl);
       const parsed = flagSchema.safeParse(await response.json());
 
       if (parsed.success) {
         if (lastUpdated !== parsed.data.lastUpdated) {
-          setFlags(parsed.data.flags);
+          setEnabledFlags(parsed.data.flags);
           setLastUpdated(parsed.data.lastUpdated);
         }
       } else {
@@ -37,19 +48,34 @@ export function useUserFlags(
       }
     }
 
-    getData();
-  }, [url, lastUpdated, setFlags, setLastUpdated]);
+    if (url) {
+      getData(url);
+    }
+  }, [url, lastUpdated, setEnabledFlags, setLastUpdated]);
 
   useEvents({
     url: listenUrl,
     schema: flagSchema,
+    enabled: Boolean(url),
     onMessage(message) {
       if (message.lastUpdated !== lastUpdated) {
-        setFlags(message.flags);
+        setEnabledFlags(message.flags);
         setLastUpdated(message.lastUpdated);
       }
     },
   });
+
+  const flags = useMemo<Record<string, boolean>>(
+    () =>
+      enabledFlags.reduce(
+        (collection, key) => ({
+          ...collection,
+          [key]: true,
+        }),
+        {},
+      ),
+    [enabledFlags],
+  );
 
   return { flags };
 }

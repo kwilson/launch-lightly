@@ -6,7 +6,12 @@ import {
   getAllProjects,
   getProjectDetails,
 } from "../data/projects";
-import { createFlag, getFlagsForUser } from "../data/flags";
+import {
+  createFlag,
+  deleteFlag,
+  getFlagsForUser,
+  updateFlag,
+} from "../data/flags";
 import { z } from "zod";
 import { streamSSE } from "hono/streaming";
 
@@ -74,7 +79,7 @@ projects.get("/:projectId/flags/:userId/listen", async (c) => {
         event: "message",
       });
 
-      await stream.sleep(15000);
+      await stream.sleep(2000);
     }
   });
 });
@@ -103,3 +108,31 @@ projects.post(
     return c.json(result, 201);
   },
 );
+
+const updateFlagSchema = newFlagSchema;
+
+projects.patch(
+  "/:projectId/:flagId",
+  validator("json", (value, c) => {
+    const parsed = updateFlagSchema.safeParse(value);
+    if (!parsed.success) {
+      return c.json(parsed.error, 401);
+    }
+
+    return parsed.data;
+  }),
+  async (c) => {
+    const projectId = c.req.param("projectId");
+    const flagId = c.req.param("flagId");
+    const flag = c.req.valid("json");
+    const result = await updateFlag({ projectId, flagId, ...flag });
+    return c.json(result, 201);
+  },
+);
+
+projects.delete("/:projectId/:flagId", async (c) => {
+  const projectId = c.req.param("projectId");
+  const flagId = c.req.param("flagId");
+  const result = await deleteFlag({ projectId, flagId });
+  return c.json(result, 201);
+});

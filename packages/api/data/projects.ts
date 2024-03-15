@@ -39,6 +39,7 @@ export async function createProject(project: CreateProjectDto) {
     });
   } catch (e) {
     console.error(e);
+  } finally {
     await prisma.$disconnect();
   }
 }
@@ -61,6 +62,7 @@ export async function getProjectDetails(projectId: string) {
     });
   } catch (e) {
     console.error(e);
+  } finally {
     await prisma.$disconnect();
   }
 }

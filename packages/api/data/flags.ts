@@ -10,6 +10,10 @@ type CreateFlagDto = {
   projectId: string;
 };
 
+type UpdateFlagDto = CreateFlagDto & {
+  flagId: string;
+};
+
 export async function createFlag(flag: CreateFlagDto) {
   const prisma = new PrismaClient();
   try {
@@ -23,6 +27,58 @@ export async function createFlag(flag: CreateFlagDto) {
     return result;
   } catch (e) {
     console.error(e);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+export async function updateFlag({
+  flagId,
+  projectId,
+  ...flag
+}: UpdateFlagDto) {
+  const prisma = new PrismaClient();
+  try {
+    const result = await prisma.flag.update({
+      where: {
+        id: flagId,
+      },
+      data: flag,
+    });
+
+    // Clear project flags from the cache
+    cache.clear([projectId]);
+
+    return result;
+  } catch (e) {
+    console.error(e);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+type DeleteFlagDto = {
+  flagId: string;
+  projectId: string;
+};
+
+export async function deleteFlag({ flagId, projectId }: DeleteFlagDto) {
+  const prisma = new PrismaClient();
+  console.log("deleting", { flagId, projectId });
+  try {
+    const result = await prisma.flag.delete({
+      where: {
+        id: flagId,
+      },
+    });
+
+    // Clear project flags from the cache
+    cache.clear([projectId]);
+
+    return result;
+  } catch (e) {
+    console.error(e);
+  } finally {
     await prisma.$disconnect();
   }
 }
@@ -76,13 +132,13 @@ export async function getFlagsForUser({
       .map((flag) => flag.key);
 
     const lastUpdated = flags
-      .map((flag) => flag.updatedAt)
+      .map((flag) => flag.updatedAt.toISOString())
       .sort()
       .at(-1);
 
     const result: FlagsForUserResult = {
       flags: enabledFlags,
-      lastUpdated: lastUpdated?.toISOString(),
+      lastUpdated,
     };
 
     cache.set(cacheKey, result);
@@ -90,6 +146,7 @@ export async function getFlagsForUser({
     return result;
   } catch (e) {
     console.error(e);
+  } finally {
     await prisma.$disconnect();
   }
 

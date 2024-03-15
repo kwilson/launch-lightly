@@ -8,14 +8,14 @@ type LaunchLightlyContextProps = {
 };
 
 type LaunchLightlyContextState = {
-  flags: string[];
+  flags: Record<string, boolean>;
   connected: boolean;
   projectId: string;
 };
 
 export const LaunchLightlyContextObject =
   createContext<LaunchLightlyContextState>({
-    flags: [],
+    flags: {},
     connected: false,
     projectId: "",
   });
