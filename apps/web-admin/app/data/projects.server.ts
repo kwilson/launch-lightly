@@ -1,8 +1,9 @@
 import { AppLoadContext } from "@remix-run/cloudflare";
 import { z } from "zod";
 import { environment } from "~/environment.server";
-import { flagSchema } from "../schemas/flagSchema";
+import { Flag, flagSchema } from "../schemas/flagSchema";
 import { Project, projectSchema } from "../schemas/projectSchema";
+import { UserFlag } from "~/schemas/userFlagSchema";
 
 export async function getAllProjects(ctx: AppLoadContext) {
   const { API_PUBLIC_URL } = environment(ctx.cloudflare.env);
@@ -28,6 +29,7 @@ export async function getProjectDetails(
     return result.data;
   }
 
+  console.log(result.error);
   return null;
 }
 
@@ -57,10 +59,7 @@ export async function createProject(
 
 export async function createProjectFlag(
   projectId: string,
-  flag: Pick<
-    z.infer<typeof flagSchema>,
-    "key" | "title" | "description" | "defaultEnabled"
-  >,
+  flag: Pick<Flag, "key" | "title" | "description" | "defaultEnabled">,
   ctx: AppLoadContext,
 ) {
   const { API_PUBLIC_URL } = environment(ctx.cloudflare.env);
@@ -89,10 +88,7 @@ export async function createProjectFlag(
 export async function updateProjectFlag(
   projectId: string,
   flagId: string,
-  flag: Pick<
-    z.infer<typeof flagSchema>,
-    "key" | "title" | "description" | "defaultEnabled"
-  >,
+  flag: Pick<Flag, "key" | "title" | "description" | "defaultEnabled">,
   ctx: AppLoadContext,
 ) {
   const { API_PUBLIC_URL } = environment(ctx.cloudflare.env);
@@ -128,6 +124,87 @@ export async function deleteProjectFlag(
     `${API_PUBLIC_URL}/projects/${projectId}/${flagId}`,
     {
       method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+  );
+
+  const result = flagSchema.safeParse(await data.json());
+
+  if (result.success) {
+    return result.data;
+  }
+
+  return {};
+}
+
+export async function createUserFlagOverride(
+  projectId: string,
+  flagKey: string,
+  userFlag: Pick<UserFlag, "userId" | "enabled">,
+  ctx: AppLoadContext,
+) {
+  const { API_PUBLIC_URL } = environment(ctx.cloudflare.env);
+  const data = await fetch(
+    `${API_PUBLIC_URL}/projects/${projectId}/${flagKey}/user-flag`,
+    {
+      method: "POST",
+      body: JSON.stringify(userFlag),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+  );
+
+  const result = flagSchema.safeParse(await data.json());
+
+  if (result.success) {
+    return result.data;
+  }
+
+  return {};
+}
+
+export async function updateUserFlagOverride(
+  projectId: string,
+  flagKey: string,
+  userFlag: Pick<UserFlag, "userId" | "enabled">,
+  ctx: AppLoadContext,
+) {
+  const { API_PUBLIC_URL } = environment(ctx.cloudflare.env);
+  const data = await fetch(
+    `${API_PUBLIC_URL}/projects/${projectId}/${flagKey}/user-flag`,
+    {
+      method: "PATCH",
+      body: JSON.stringify(userFlag),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+  );
+
+  const result = flagSchema.safeParse(await data.json());
+
+  if (result.success) {
+    return result.data;
+  }
+
+  return {};
+}
+
+export async function deleteUserFlagOverride(
+  projectId: string,
+  flagKey: string,
+  userFlag: Pick<UserFlag, "userId">,
+  ctx: AppLoadContext,
+) {
+  const { API_PUBLIC_URL } = environment(ctx.cloudflare.env);
+  const data = await fetch(
+    `${API_PUBLIC_URL}/projects/${projectId}/${flagKey}/user-flag`,
+    {
+      method: "DELETE",
+      body: JSON.stringify(userFlag),
       headers: {
         "Content-Type": "application/json",
       },

@@ -1,15 +1,4 @@
-import {
-  Box,
-  Flex,
-  Heading,
-  FormLabel,
-  Input,
-  Textarea,
-  Text,
-  Switch,
-  HStack,
-  Button as ChakraButton,
-} from "@chakra-ui/react";
+import { Box, Flex, Heading, Button as ChakraButton } from "@chakra-ui/react";
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
@@ -24,12 +13,15 @@ import { FlagForm } from "~/components/flag-form";
 import { getProjectDetails, updateProjectFlag } from "~/data/projects.server";
 import { sizing } from "~/theme";
 import { DeleteFlagModal } from "./projects.$projectId.$flagId.delete";
+import { CreateUserOverride } from "./projects.$projectId.$flagKey.createUserOverride";
+import { UserFlagOverridesList } from "~/components/user-flag-overrides-list.tsx";
 
 export const loader = async ({ params, context }: LoaderFunctionArgs) => {
   const { projectId, flagKey } = $params(
     "/projects/:projectId/:flagKey",
     params,
   );
+
   const project = await getProjectDetails(projectId, context);
   const flag = project?.flags.find((flag) => flag.key === flagKey);
 
@@ -132,6 +124,34 @@ export default function FlagAdmin() {
                     </ChakraButton>
                   </Flex>
                 </Box>
+              </Flex>
+            </Box>
+          </Box>
+
+          <Box>
+            <Heading fontSize="1.8rem" mb="1rem" as="h3">
+              User Overrides
+            </Heading>
+
+            <Box
+              bg="ivory.100"
+              borderColor="cerulean.500"
+              borderWidth={1}
+              p={sizing.blockSpacing}
+              rounded={6}
+              mx={`-${sizing.blockSpacing}`}
+            >
+              <Flex flexDir="column" gap="2rem">
+                {/* <input type="hidden" name="id" value={flag.id} /> */}
+
+                {/* <FlagForm flag={flag} /> */}
+
+                <UserFlagOverridesList
+                  flag={flag}
+                  projectId={project.id}
+                  userFlags={flag.userFlags}
+                />
+                <CreateUserOverride projectId={project.id} flagKey={flag.key} />
               </Flex>
             </Box>
           </Box>

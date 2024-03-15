@@ -14,6 +14,11 @@ import {
 } from "../data/flags";
 import { z } from "zod";
 import { streamSSE } from "hono/streaming";
+import {
+  createUserFlag,
+  deleteUserFlag,
+  updateUserFlag,
+} from "../data/userFlags";
 
 export const projects = new Hono();
 projects.use("/*", cors());
@@ -136,3 +141,66 @@ projects.delete("/:projectId/:flagId", async (c) => {
   const result = await deleteFlag({ projectId, flagId });
   return c.json(result, 201);
 });
+
+// User flags
+const newUserFlagSchema = z.object({
+  userId: z.string(),
+  enabled: z.boolean().default(false),
+});
+
+projects.post(
+  "/:projectId/:flagKey/user-flag",
+  validator("json", (value, c) => {
+    const parsed = newUserFlagSchema.safeParse(value);
+    if (!parsed.success) {
+      return c.json(parsed.error, 401);
+    }
+
+    return parsed.data;
+  }),
+  async (c) => {
+    const projectId = c.req.param("projectId");
+    const flagKey = c.req.param("flagKey");
+    const userFlag = c.req.valid("json");
+    const result = await createUserFlag({ projectId, flagKey, ...userFlag });
+    return c.json(result, 201);
+  },
+);
+
+projects.patch(
+  "/:projectId/:flagKey/user-flag",
+  validator("json", (value, c) => {
+    const parsed = newUserFlagSchema.safeParse(value);
+    if (!parsed.success) {
+      return c.json(parsed.error, 401);
+    }
+
+    return parsed.data;
+  }),
+  async (c) => {
+    const projectId = c.req.param("projectId");
+    const flagKey = c.req.param("flagKey");
+    const userFlag = c.req.valid("json");
+    const result = await updateUserFlag({ projectId, flagKey, ...userFlag });
+    return c.json(result, 201);
+  },
+);
+
+projects.delete(
+  "/:projectId/:flagKey/user-flag",
+  validator("json", (value, c) => {
+    const parsed = newUserFlagSchema.safeParse(value);
+    if (!parsed.success) {
+      return c.json(parsed.error, 401);
+    }
+
+    return parsed.data;
+  }),
+  async (c) => {
+    const projectId = c.req.param("projectId");
+    const flagKey = c.req.param("flagKey");
+    const userFlag = c.req.valid("json");
+    const result = await deleteUserFlag({ projectId, flagKey, ...userFlag });
+    return c.json(result, 201);
+  },
+);

@@ -64,7 +64,6 @@ type DeleteFlagDto = {
 
 export async function deleteFlag({ flagId, projectId }: DeleteFlagDto) {
   const prisma = new PrismaClient();
-  console.log("deleting", { flagId, projectId });
   try {
     const result = await prisma.flag.delete({
       where: {
@@ -100,7 +99,7 @@ export async function getFlagsForUser({
   const cacheKey = [projectId, userId];
   if (cache.has(cacheKey)) {
     try {
-      console.log("from cache", JSON.stringify(cacheKey), cache.get(cacheKey));
+      // console.log("from cache", JSON.stringify(cacheKey), cache.get(cacheKey));
       return flagsForUserSchema.parse(cache.get(cacheKey));
     } catch (e) {
       console.error(e);
@@ -108,7 +107,7 @@ export async function getFlagsForUser({
   }
 
   const prisma = new PrismaClient();
-  console.log("cache miss", JSON.stringify(cacheKey));
+  // console.log("cache miss", JSON.stringify(cacheKey));
 
   try {
     const flags = await prisma.flag.findMany({
