@@ -3,17 +3,41 @@ import {
   useLaunchLightlyContext,
 } from "@launchlightly/react";
 import "./App.css";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { z } from "zod";
+
+const flagSchema = z.object({
+  "show-copilot": z.boolean().default(false),
+});
 
 function FlaggedContext() {
   const { flags, connected, projectId } = useLaunchLightlyContext();
+  const parsedFlags = useMemo(() => flagSchema.parse(flags), [flags]);
 
-  return <pre>{JSON.stringify({ flags, connected, projectId }, null, 2)}</pre>;
+  return (
+    <>
+      <h1>My Dummy App</h1>
+
+      <div className="features">
+        <button type="button">Do Some Stuff</button>
+        <button type="button">Do Some Other Stuff</button>
+        {parsedFlags["show-copilot"] && (
+          <button type="button">Launch Copilot</button>
+        )}
+      </div>
+
+      <hr />
+
+      <pre>
+        {JSON.stringify({ flags, parsedFlags, connected, projectId }, null, 2)}
+      </pre>
+    </>
+  );
 }
 
 function App() {
   const [userFieldId, setUserFieldId] = useState("");
-  const [userId, setUserId] = useState("");
+  const [userId, setUserId] = useState("kevin");
 
   const isLoggedIn = Boolean(userId);
 
@@ -56,9 +80,11 @@ function App() {
         </form>
       )}
 
-      <div style={{ textAlign: "left" }}>
-        <FlaggedContext />
-      </div>
+      {isLoggedIn && (
+        <div style={{ textAlign: "left" }}>
+          <FlaggedContext />
+        </div>
+      )}
     </LaunchLightlyContext>
   );
 }

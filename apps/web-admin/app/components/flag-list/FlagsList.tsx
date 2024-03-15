@@ -61,7 +61,15 @@ export function FlagsList({ projectId, flags }: FlagsListProps) {
                 </Link>
               </Td>
               <Td textAlign="center" width="min-content">
-                <Switch defaultChecked={flag.defaultEnabled} readOnly />
+                <Link
+                  to={$path("/projects/:projectId/:flagKey", {
+                    projectId,
+                    flagKey: flag.key,
+                  })}
+                  prefetch="intent"
+                >
+                  <Switch defaultChecked={flag.defaultEnabled} readOnly />
+                </Link>
               </Td>
               <Td align="right" textAlign="right" width="min-content">
                 <Button

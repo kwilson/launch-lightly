@@ -1,5 +1,6 @@
 #root {
   max-width: 1280px;
+  min-width: 600px;
   margin: 0 auto;
   padding: 2rem;
 }
@@ -50,11 +51,22 @@
   padding: 1rem;
 }
 
+.userform label {
+  display: flex;
+  flex-direction: column;
+}
+
 .userform input {
-  padding: .5rem 1rem;
+  padding: 1rem;
 }
 
 .login-bar {
   display: flex;
   justify-content: space-between;
+}
+
+.features {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
 }
