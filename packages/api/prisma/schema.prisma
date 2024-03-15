@@ -45,6 +45,9 @@ model UserFlag {
   userId          String
   flagId          String
   enabled         Boolean   @default(false)
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
   Flag            Flag @relation(fields: [flagId], references: [id])
 

@@ -131,13 +131,17 @@ export async function getFlagsForUser({
       .map((flag) => flag.key);
 
     const lastUpdated = flags
-      .map((flag) => flag.updatedAt.toISOString())
+      .map((flag) => [
+        flag.updatedAt.toISOString(),
+        ...flag.userFlags.map((userFlag) => userFlag.updatedAt.toISOString()),
+      ])
+      .flat()
       .sort()
       .at(-1);
 
     const result: FlagsForUserResult = {
       flags: enabledFlags,
-      lastUpdated,
+      lastUpdated: lastUpdated ?? new Date().toISOString(),
     };
 
     cache.set(cacheKey, result);
